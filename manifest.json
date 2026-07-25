@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "ClarityAI — Adaptive Reading Assistant",
+  "version": "1.0.0",
+  "description": "One click makes any webpage easier to read. Focus mode, dyslexia-friendly formatting, and AI-powered simplification.",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.svg",
+      "48": "icons/icon48.svg",
+      "128": "icons/icon128.svg"
+    }
+  },
+  "background": {
+    "service_worker": "background/background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "content/utils/dom-utils.js",
+        "content/modes/focus.js",
+        "content/modes/dyslexia.js",
+        "content/modes/simplify.js",
+        "content/content-script.js"
+      ],
+      "css": [
+        "content/css/focus.css",
+        "content/css/dyslexia.css",
+        "content/css/simplify.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["content/css/*"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.svg",
+    "48": "icons/icon48.svg",
+    "128": "icons/icon128.svg"
+  }
+}

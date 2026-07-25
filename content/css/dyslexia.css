@@ -1,0 +1,133 @@
+/* Dyslexia Mode Styles */
+
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/woff/OpenDyslexic-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/woff/OpenDyslexic-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+.clarity-dyslexia-mode {
+  --dys-bg: #FFF9E6 !important;
+  --dys-text: #2D2D2D !important;
+  --dys-font: 'OpenDyslexic', 'Comic Sans MS', 'Lexie Readable', Arial, sans-serif !important;
+  --dys-line-height: 2.0 !important;
+  --dys-letter-spacing: 0.35em !important;
+  --dys-word-spacing: 0.2em !important;
+  --dys-paragraph-mb: 1.5em !important;
+  --dys-max-width: 680px !important;
+
+  background-color: var(--dys-bg) !important;
+  color: var(--dys-text) !important;
+  font-family: var(--dys-font) !important;
+  line-height: var(--dys-line-height) !important;
+  letter-spacing: var(--dys-letter-spacing) !important;
+  word-spacing: var(--dys-word-spacing) !important;
+}
+
+/* Apply to all text elements inside body */
+.clarity-dyslexia-mode p,
+.clarity-dyslexia-mode li,
+.clarity-dyslexia-mode blockquote,
+.clarity-dyslexia-mode td,
+.clarity-dyslexia-mode th,
+.clarity-dyslexia-mode figcaption,
+.clarity-dyslexia-mode label,
+.clarity-dyslexia-mode input,
+.clarity-dyslexia-mode textarea,
+.clarity-dyslexia-mode select,
+.clarity-dyslexia-mode button,
+.clarity-dyslexia-mode .clarity-focus-content {
+  font-family: var(--dys-font) !important;
+  line-height: var(--dys-line-height) !important;
+  letter-spacing: var(--dys-letter-spacing) !important;
+  word-spacing: var(--dys-word-spacing) !important;
+}
+
+.clarity-dyslexia-mode h1,
+.clarity-dyslexia-mode h2,
+.clarity-dyslexia-mode h3,
+.clarity-dyslexia-mode h4,
+.clarity-dyslexia-mode h5,
+.clarity-dyslexia-mode h6 {
+  font-family: var(--dys-font) !important;
+  font-weight: bold !important;
+  letter-spacing: 0.2em !important;
+  word-spacing: 0.3em !important;
+  margin-top: 1.2em !important;
+  margin-bottom: 0.6em !important;
+}
+
+/* Paragraph spacing */
+.clarity-dyslexia-mode p {
+  margin-bottom: var(--dys-paragraph-mb) !important;
+  max-width: var(--dys-max-width) !important;
+}
+
+.clarity-dyslexia-mode .clarity-focus-content {
+  max-width: var(--dys-max-width) !important;
+}
+
+/* Alternating paragraph backgrounds for visual tracking */
+.clarity-dyslexia-mode .clarity-focus-content p:nth-child(even) {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border-radius: 4px !important;
+  padding: 4px 8px !important;
+}
+
+/* Bold first letter of paragraphs for better anchoring */
+.clarity-dyslexia-mode .clarity-focus-content p::first-letter {
+  font-weight: bold !important;
+  font-size: 1.15em !important;
+}
+
+/* Larger, more distinct punctuation */
+.clarity-dyslexia-mode .clarity-focus-content p::after {
+  content: '' !important;
+}
+
+/* Reset list styling for better readability */
+.clarity-dyslexia-mode ul,
+.clarity-dyslexia-mode ol {
+  padding-left: 2em !important;
+}
+
+.clarity-dyslexia-mode li {
+  margin-bottom: 0.6em !important;
+}
+
+/* Blockquotes in dyslexia mode */
+.clarity-dyslexia-mode blockquote {
+  border-left: 4px solid #D4A574 !important;
+  padding-left: 20px !important;
+  margin: 1.2em 0 !important;
+  opacity: 0.9 !important;
+}
+
+/* Links — make them very distinct */
+.clarity-dyslexia-mode a {
+  text-decoration: underline !important;
+  text-decoration-style: solid !important;
+  text-underline-offset: 3px !important;
+  font-weight: bold !important;
+  color: #2563EB !important;
+}
+
+/* Code blocks */
+.clarity-dyslexia-mode code,
+.clarity-dyslexia-mode pre {
+  font-family: 'OpenDyslexic Mono', monospace !important;
+  font-size: 0.85em !important;
+  background: rgba(0, 0, 0, 0.04) !important;
+  padding: 2px 6px !important;
+  border-radius: 3px !important;
+}

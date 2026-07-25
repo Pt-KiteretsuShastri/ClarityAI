@@ -1,0 +1,82 @@
+/* Simplify Mode Styles */
+
+.clarity-simplify-mode {
+  --simplify-bg: #F8FAFC !important;
+  --simplify-text: #0F172A !important;
+  --simplify-muted: #475569 !important;
+  --simplify-accent: #059669 !important;
+  --simplify-heading: #0F766E !important;
+}
+
+.clarity-simplify-content {
+  max-width: 720px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  background: white !important;
+  border-radius: 8px !important;
+  padding: 32px 40px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+  font-size: 112% !important;
+  line-height: 1.8 !important;
+  color: var(--simplify-text) !important;
+}
+
+.clarity-simplify-content h2,
+.clarity-simplify-content h3,
+.clarity-simplify-content h4 {
+  color: var(--simplify-heading) !important;
+  margin-top: 1.4em !important;
+  margin-bottom: 0.5em !important;
+}
+
+.clarity-simplify-content p {
+  margin-bottom: 1em !important;
+  line-height: 1.8 !important;
+}
+
+/* Loading state */
+.clarity-simplify-loading {
+  position: relative !important;
+}
+
+.clarity-simplify-loading::after {
+  content: '✨ Simplifying...' !important;
+  display: block !important;
+  padding: 20px !important;
+  text-align: center !important;
+  color: var(--simplify-muted) !important;
+  font-style: italic !important;
+  animation: clarity-pulse 1.5s ease-in-out infinite !important;
+}
+
+@keyframes clarity-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* Simplified text citation */
+.clarity-simplify-citation {
+  display: inline-block !important;
+  font-size: 0.75em !important;
+  color: var(--simplify-muted) !important;
+  background: #F1F5F9 !important;
+  padding: 2px 8px !important;
+  border-radius: 4px !important;
+  margin-left: 4px !important;
+  cursor: pointer !important;
+}
+
+.clarity-simplify-citation:hover {
+  background: #E2E8F0 !important;
+}
+
+/* Error state */
+.clarity-simplify-error {
+  padding: 16px !important;
+  background: #FEF2F2 !important;
+  border: 1px solid #FECACA !important;
+  border-radius: 8px !important;
+  color: #991B1B !important;
+  margin: 16px 0 !important;
+  font-size: 14px !important;
+}

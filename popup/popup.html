@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo">
+        <svg width="24" height="24" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="8" fill="#4F46E5"/>
+          <text x="24" y="34" font-size="28" fill="white" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold">C</text>
+        </svg>
+        <h1>ClarityAI</h1>
+      </div>
+      <span class="badge">Beta</span>
+    </header>
+
+    <p class="subtitle">Adaptive Reading Assistant</p>
+
+    <div class="mode-grid">
+      <button class="mode-card" data-mode="focus" data-action="toggle">
+        <div class="mode-icon">🎯</div>
+        <div class="mode-label">Focus Mode</div>
+        <div class="mode-desc">Remove clutter, enlarge text</div>
+      </button>
+
+      <button class="mode-card" data-mode="dyslexia" data-action="toggle">
+        <div class="mode-icon">📖</div>
+        <div class="mode-label">Dyslexia Mode</div>
+        <div class="mode-desc">Dyslexia-friendly formatting</div>
+      </button>
+
+      <button class="mode-card" data-mode="simplify" data-action="toggle">
+        <div class="mode-icon">✂️</div>
+        <div class="mode-label">Simplify</div>
+        <div class="mode-desc">AI rewrites in plain language</div>
+      </button>
+    </div>
+
+    <div class="status-bar">
+      <span class="status-indicator" id="statusIndicator"></span>
+      <span id="statusText">No modes active</span>
+    </div>
+
+    <div class="actions">
+      <button class="btn-reset" id="resetBtn">
+        <span class="btn-icon">🔄</span>
+        Reset Page
+      </button>
+    </div>
+
+    <footer class="footer">
+      <span class="key-hint">Click a mode to toggle</span>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
