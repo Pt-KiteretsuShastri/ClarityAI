@@ -33,9 +33,7 @@ export function Navbar() {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between">
           <a href="#" className="flex items-center gap-2 group" data-testid="link-home">
-            <div className="bg-primary/10 text-primary p-2 rounded-xl group-hover:bg-primary group-hover:text-white transition-colors">
-              <Sparkles className="w-5 h-5" />
-            </div>
+            <img src="/logo.svg" alt="ClarityAI logo" className="w-10 h-10 rounded-2xl bg-white/90 shadow-sm" />
             <span className="font-display font-bold text-xl tracking-tight">ClarityAI</span>
           </a>
 
