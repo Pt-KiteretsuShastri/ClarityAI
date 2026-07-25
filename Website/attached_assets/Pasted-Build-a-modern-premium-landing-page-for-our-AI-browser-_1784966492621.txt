@@ -1,0 +1,328 @@
+Build a modern, premium landing page for our AI browser extension called "ClarityAI".
+
+The website should feel like Apple's product pages mixed with Linear, Raycast, and Notion—minimal, elegant, smooth animations, clean typography, rounded cards, glassmorphism where appropriate, and a dark/light theme toggle.
+
+Use React + Tailwind CSS (or Next.js if preferred). Make the website fully responsive and production-quality.
+
+Primary accent color:
+#4F46E5 (Indigo)
+Secondary accent:
+#7C3AED
+Background:
+White with subtle gradients (dark mode supported)
+
+----------------------------------------
+PRODUCT
+----------------------------------------
+
+Name:
+ClarityAI
+
+Tagline:
+"The web should adapt to people—not the other way around."
+
+Subtitle:
+ClarityAI is an AI-powered browser extension that transforms any webpage into a personalized reading experience. Remove distractions, simplify complex content, improve accessibility, and turn information into actionable knowledge.
+
+Primary CTA:
+Download Extension
+
+Secondary CTA:
+View Demo
+
+----------------------------------------
+HERO SECTION
+----------------------------------------
+
+Large headline
+
+Beautiful illustration/mock browser window
+
+Two CTA buttons
+
+Animated feature preview
+
+Small badges
+
+Chrome Extension
+Firefox Compatible
+AI Powered
+Open Source
+
+----------------------------------------
+PROBLEM SECTION
+----------------------------------------
+
+Title:
+The Web Was Built for Publishing.
+Not for Understanding.
+
+Explain that today's websites overwhelm readers with:
+
+• Ads
+• Cookie banners
+• Sidebars
+• Dense text
+• Technical language
+• Information overload
+
+Include an illustration showing a cluttered webpage.
+
+Then transition to:
+
+ClarityAI adapts the webpage to the reader instead of forcing the reader to adapt.
+
+----------------------------------------
+HOW IT WORKS
+----------------------------------------
+
+Create a beautiful 4-step horizontal timeline.
+
+1.
+Open any webpage
+
+↓
+
+2.
+Click ClarityAI
+
+↓
+
+3.
+Choose a mode
+
+↓
+
+4.
+Read effortlessly
+
+----------------------------------------
+FEATURES
+----------------------------------------
+
+Create premium cards with icons and subtle hover animations.
+
+Feature 1
+
+🎯 Focus Mode
+
+Description:
+
+Removes ads, sidebars, cookie banners, popups, and visual clutter to create a distraction-free reading experience.
+
+Feature 2
+
+📖 Dyslexia Mode
+
+Description:
+
+Applies dyslexia-friendly typography, spacing, and a warm reading background for improved readability.
+
+Feature 3
+
+✂️ Simplify
+
+Description:
+
+Uses AI to rewrite difficult articles into clear, easy-to-understand language while preserving meaning and facts.
+
+Feature 4
+
+✅ Reading Checklist
+
+Description:
+
+Extracts key takeaways into an interactive checklist so readers remember what matters.
+
+Feature 5
+
+📝 Save to Notion
+
+Description:
+
+Save summaries and reading checklists directly into your Notion workspace.
+
+----------------------------------------
+WHY IT MATTERS
+----------------------------------------
+
+Large statistics section.
+
+Use animated counters.
+
+Examples:
+
+Millions of people struggle with online readability.
+
+Most webpages are written above the average reading level.
+
+Modern websites contain dozens of distracting elements.
+
+Information overload reduces comprehension and retention.
+
+(Design placeholders so statistics can easily be updated later.)
+
+----------------------------------------
+DEMO SECTION
+----------------------------------------
+
+Beautiful browser mockup.
+
+Include a slider or tab animation showing:
+
+Before
+
+↓
+
+After Focus Mode
+
+↓
+
+After Simplify
+
+↓
+
+Reading Checklist
+
+Make this visually engaging.
+
+----------------------------------------
+WHO IT'S FOR
+----------------------------------------
+
+Cards for:
+
+Students
+
+Researchers
+
+Professionals
+
+People with ADHD
+
+People with Dyslexia
+
+Anyone overwhelmed by online information
+
+----------------------------------------
+TECH STACK
+----------------------------------------
+
+Display attractive badges.
+
+Chrome Extension
+
+Manifest V3
+
+JavaScript
+
+Anthropic
+
+OpenAI
+
+Notion API
+
+Firefox
+
+AI
+
+----------------------------------------
+OPEN SOURCE
+----------------------------------------
+
+Section explaining that ClarityAI is open source and welcomes contributors.
+
+Buttons:
+
+GitHub
+
+Documentation
+
+----------------------------------------
+DOWNLOAD
+----------------------------------------
+
+Large CTA section.
+
+Headline:
+
+Start Reading Smarter Today.
+
+Buttons:
+
+Download for Chrome
+
+Download for Firefox
+
+GitHub Repository
+
+----------------------------------------
+FOOTER
+----------------------------------------
+
+Links:
+
+Features
+
+Documentation
+
+GitHub
+
+Privacy
+
+License
+
+Built during Sketch'N'Ship Hackathon 2026
+
+----------------------------------------
+DESIGN REQUIREMENTS
+----------------------------------------
+
+• Beautiful scroll animations
+• Framer Motion animations
+• Gradient text
+• Glassmorphism cards
+• Floating background blobs
+• Responsive layout
+• Smooth hover effects
+• Accessibility-friendly colors
+• Clean spacing
+• Premium typography
+• Lucide React icons
+• Rounded buttons
+• Animated feature cards
+• Sticky navbar
+• Active section highlighting
+• Dark mode toggle
+• Smooth scrolling
+• Loading animations
+
+----------------------------------------
+COPY STYLE
+----------------------------------------
+
+Avoid generic AI buzzwords.
+
+Focus on:
+
+Accessibility
+
+Reading
+
+Understanding
+
+Focus
+
+Learning
+
+Knowledge
+
+Human-centered design
+
+Every section should explain WHY the feature exists, not just WHAT it does.
+
+The overall message should consistently reinforce:
+
+"The web should adapt to people—not the other way around."
+
+Generate complete production-ready code with clean folder structure and reusable React components.

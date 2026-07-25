@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "ClarityAI Landing Page"
+version = "1.0.0"
+id = "artifacts/clarity-ai"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25887
+
+[services.development]
+run = "pnpm --filter @workspace/clarity-ai run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/clarity-ai", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/clarity-ai/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25887"
+BASE_PATH = "/"
