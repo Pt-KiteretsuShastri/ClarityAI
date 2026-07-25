@@ -15,7 +15,10 @@
         </svg>
         <h1>ClarityAI</h1>
       </div>
-      <span class="badge">Beta</span>
+      <div class="header-actions">
+        <span class="badge">Beta</span>
+        <button class="btn-settings" id="settingsBtn" title="Settings">⚙️</button>
+      </div>
     </header>
 
     <p class="subtitle">Adaptive Reading Assistant</p>
@@ -50,6 +53,34 @@
         <span class="btn-icon">🔄</span>
         Reset Page
       </button>
+    </div>
+
+    <!-- Settings Panel (hidden by default) -->
+    <div class="settings-panel" id="settingsPanel" style="display:none;">
+      <div class="settings-header">
+        <h3>⚙️ Settings</h3>
+        <button class="btn-close-settings" id="closeSettingsBtn">✕</button>
+      </div>
+      <div class="settings-body">
+        <label class="settings-label">LLM Provider</label>
+        <select class="settings-select" id="providerSelect">
+          <option value="anthropic">Anthropic Claude</option>
+          <option value="openai">OpenAI</option>
+        </select>
+
+        <label class="settings-label">API Key</label>
+        <input type="password" class="settings-input" id="apiKeyInput" placeholder="sk-ant-... or sk-...">
+        <p class="settings-hint">Get a key from <a href="https://console.anthropic.com" target="_blank">Anthropic</a> or <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI</a></p>
+
+        <label class="settings-label">Model (optional)</label>
+        <input type="text" class="settings-input" id="modelInput" placeholder="claude-3-haiku-20240307">
+
+        <div class="settings-actions">
+          <button class="btn-save" id="saveSettingsBtn">Save</button>
+          <button class="btn-cancel" id="cancelSettingsBtn">Cancel</button>
+        </div>
+        <p class="settings-status" id="settingsStatus"></p>
+      </div>
     </div>
 
     <footer class="footer">
