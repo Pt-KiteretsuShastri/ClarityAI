@@ -27,14 +27,24 @@ export function DownloadCTA() {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white text-primary px-8 py-4 rounded-full font-bold text-lg shadow-xl hover:scale-105 transition-transform" data-testid="btn-download-chrome">
+            <a
+              href="/clarity-ai-extension.zip"
+              download="clarity-ai-extension.zip"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white text-primary px-8 py-4 rounded-full font-bold text-lg shadow-xl hover:scale-105 transition-transform"
+              data-testid="btn-download-chrome"
+            >
               <Download className="w-5 h-5" />
               Download for Chrome
-            </button>
-            <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 px-8 py-4 rounded-full font-bold text-lg transition-colors backdrop-blur-sm" data-testid="btn-download-firefox">
+            </a>
+            <a
+              href="/clarity-ai-extension.zip"
+              download="clarity-ai-extension.zip"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 px-8 py-4 rounded-full font-bold text-lg transition-colors backdrop-blur-sm"
+              data-testid="btn-download-firefox"
+            >
               <SiFirefox className="w-5 h-5" />
               Get for Firefox
-            </button>
+            </a>
             <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-transparent hover:bg-white/10 text-white border border-transparent hover:border-white/20 px-8 py-4 rounded-full font-bold text-lg transition-colors" data-testid="btn-github">
               <Github className="w-5 h-5" />
               Source Code
