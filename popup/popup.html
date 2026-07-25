@@ -7,6 +7,7 @@
 </head>
 <body>
   <div class="container">
+    <!-- Header -->
     <header class="header">
       <div class="logo">
         <svg width="24" height="24" viewBox="0 0 48 48" fill="none">
@@ -23,31 +24,40 @@
 
     <p class="subtitle">Adaptive Reading Assistant</p>
 
+    <!-- Mode Cards -->
     <div class="mode-grid">
       <button class="mode-card" data-mode="focus" data-action="toggle">
         <div class="mode-icon">🎯</div>
-        <div class="mode-label">Focus Mode</div>
-        <div class="mode-desc">Remove clutter, enlarge text</div>
+        <div class="mode-info">
+          <div class="mode-label">Focus Mode</div>
+          <div class="mode-desc">Remove clutter, enlarge text</div>
+        </div>
       </button>
 
       <button class="mode-card" data-mode="dyslexia" data-action="toggle">
         <div class="mode-icon">📖</div>
-        <div class="mode-label">Dyslexia Mode</div>
-        <div class="mode-desc">Dyslexia-friendly formatting</div>
+        <div class="mode-info">
+          <div class="mode-label">Dyslexia Mode</div>
+          <div class="mode-desc">Dyslexia-friendly formatting</div>
+        </div>
       </button>
 
       <button class="mode-card" data-mode="simplify" data-action="toggle">
         <div class="mode-icon">✂️</div>
-        <div class="mode-label">Simplify</div>
-        <div class="mode-desc">AI rewrites in plain language</div>
+        <div class="mode-info">
+          <div class="mode-label">Simplify</div>
+          <div class="mode-desc">AI rewrites in plain language</div>
+        </div>
       </button>
     </div>
 
+    <!-- Status -->
     <div class="status-bar">
       <span class="status-indicator" id="statusIndicator"></span>
       <span id="statusText">No modes active</span>
     </div>
 
+    <!-- Actions -->
     <div class="actions">
       <button class="btn-reset" id="resetBtn">
         <span class="btn-icon">🔄</span>
@@ -55,7 +65,7 @@
       </button>
     </div>
 
-    <!-- Settings Panel (hidden by default) -->
+    <!-- Settings Panel -->
     <div class="settings-panel" id="settingsPanel" style="display:none;">
       <div class="settings-header">
         <h3>⚙️ Settings</h3>
@@ -69,10 +79,13 @@
         </select>
 
         <label class="settings-label">API Key</label>
-        <input type="password" class="settings-input" id="apiKeyInput" placeholder="sk-ant-... or sk-...">
-        <p class="settings-hint">Get a key from <a href="https://console.anthropic.com" target="_blank">Anthropic</a> or <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI</a></p>
+        <input type="password" class="settings-input" id="apiKeyInput" placeholder="sk-ant-... or sk-..." autocomplete="off">
+        <p class="settings-hint">
+          Get a key from <a href="https://console.anthropic.com" target="_blank">Anthropic</a>
+          or <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI</a>
+        </p>
 
-        <label class="settings-label">Model (optional)</label>
+        <label class="settings-label">Model <span style="color:var(--text-dim);font-weight:400;">(optional)</span></label>
         <input type="text" class="settings-input" id="modelInput" placeholder="claude-3-haiku-20240307">
 
         <div class="settings-actions">
@@ -83,8 +96,10 @@
       </div>
     </div>
 
+    <!-- Footer -->
     <footer class="footer">
       <span class="key-hint">Click a mode to toggle</span>
+      <span class="footer-version">v1.0.0</span>
     </footer>
   </div>
   <script src="popup.js"></script>

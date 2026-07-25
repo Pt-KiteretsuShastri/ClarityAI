@@ -1,19 +1,50 @@
-/* Background Service Worker — Handles LLM API calls with caching */
+/**
+ * @fileoverview Background Service Worker — Handles LLM API calls with caching.
+ *
+ * This script runs as a service worker (Manifest V3) in a privileged context.
+ * It handles:
+ * - LLM API requests from content scripts (simplify, checklist)
+ * - Configuration storage and retrieval
+ * - In-memory response caching with TTL
+ *
+ * Communication flow:
+ *   content-script.js  ──(chrome.runtime.sendMessage)──►  background.js  ──►  LLM API
+ */
 
 import { callLLM } from '../lib/llm.js';
 import { PROMPTS } from '../lib/prompts.js';
 import { StorageManager } from '../lib/storage.js';
 
-// ── Cache for LLM responses ───────────────────────────────────
-const responseCache = new Map();
-const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
+// ── Constants ─────────────────────────────────────────────────
+/** @const {number} Cache TTL in milliseconds (30 minutes) */
+const CACHE_TTL = 30 * 60 * 1000;
 
-// ── Message handler ───────────────────────────────────────────
+/** @const {number} Maximum cache entries before LRU cleanup */
+const MAX_CACHE_SIZE = 100;
+
+// ── In-Memory Cache ───────────────────────────────────────────
+/**
+ * LLM response cache. Entries expire after CACHE_TTL.
+ * @type {Map<string, {value: string, timestamp: number}>}
+ */
+const responseCache = new Map();
+
+// ── Message Handler ───────────────────────────────────────────
+/**
+ * Central message dispatcher for the extension.
+ * Routes messages to the appropriate handler based on type.
+ *
+ * @param {Object} msg - Incoming message
+ * @param {string} msg.type - Message type
+ * @param {Function} sender - Sender info
+ * @param {Function} sendResponse - Response callback
+ * @returns {boolean} True if response will be sent asynchronously
+ */
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   switch (msg.type) {
     case 'LLM_REQUEST':
       handleLLMRequest(msg, sendResponse);
-      return true; // Keep channel open for async
+      return true; // Async — keep channel open
 
     case 'GET_CONFIG':
       handleGetConfig(sendResponse);
@@ -25,47 +56,64 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
     default:
       sendResponse({ error: `Unknown message type: ${msg.type}` });
+      return false;
   }
 });
 
 // ── LLM Request Handler ───────────────────────────────────────
+
+/**
+ * Process an LLM request from the content script.
+ * Validates input, checks cache, selects prompt, calls LLM, caches result.
+ *
+ * @param {Object} msg - Request message
+ * @param {string} msg.mode - 'simplify' | 'checklist'
+ * @param {string} msg.text - Text content to process
+ * @param {string} [msg.url] - Page URL (for cache key)
+ * @param {Function} sendResponse - Response callback
+ */
 async function handleLLMRequest(msg, sendResponse) {
-  const { mode, text, url, title } = msg;
+  const { mode, text, url } = msg;
 
   try {
-    // Validate input
+    // ── Validate input ────────────────────────────────────
     if (!text || text.trim().length < 10) {
-      sendResponse({ error: 'Not enough text to process' });
+      sendResponse({ error: 'Not enough text to process. Try a page with more content.' });
       return;
     }
 
-    // Get configuration
+    // ── Load configuration ─────────────────────────────────
     const config = await StorageManager.getConfig();
     if (!config.apiKey) {
-      sendResponse({ error: 'API key not configured. Click the extension icon and set up your API key.' });
+      sendResponse({
+        error: 'API key not configured. Click the extension icon, then the ⚙️ gear to set up your API key.',
+      });
       return;
     }
 
-    // Check cache
-    const cacheKey = `${mode}:${url}:${text.slice(0, 100)}`;
-    const cached = getFromCache(cacheKey);
+    // ── Check cache ────────────────────────────────────────
+    const cacheKey = `${mode}:${hashString(text.slice(0, 200))}`;
+    const cached = getCached(cacheKey);
     if (cached) {
-      sendResponse({ text: cached });
+      sendResponse({ text: cached, mode, source: url, cached: true });
       return;
     }
 
-    // Get prompt based on mode
+    // ── Select prompt template ─────────────────────────────
     let prompt;
-    if (mode === 'simplify') {
-      prompt = PROMPTS.simplify(text);
-    } else if (mode === 'checklist') {
-      prompt = PROMPTS.checklist(text);
-    } else {
-      sendResponse({ error: `Unknown mode: ${mode}` });
-      return;
+    switch (mode) {
+      case 'simplify':
+        prompt = PROMPTS.simplify(text);
+        break;
+      case 'checklist':
+        prompt = PROMPTS.checklist(text);
+        break;
+      default:
+        sendResponse({ error: `Unknown LLM mode: ${mode}` });
+        return;
     }
 
-    // Call LLM
+    // ── Call LLM ───────────────────────────────────────────
     const result = await callLLM({
       prompt,
       mode,
@@ -75,36 +123,49 @@ async function handleLLMRequest(msg, sendResponse) {
       baseUrl: config.baseUrl,
     });
 
-    // Cache the result
-    addToCache(cacheKey, result);
-
-    // Send response
-    sendResponse({
-      text: result,
-      mode,
-      source: url,
-    });
+    // ── Cache and respond ──────────────────────────────────
+    setCached(cacheKey, result);
+    sendResponse({ text: result, mode, source: url, cached: false });
 
   } catch (err) {
-    console.error('ClarityAI LLM error:', err);
+    console.error('🔍 ClarityAI LLM error:', err.message);
     sendResponse({
       error: err.message || 'AI service error. Please try again.',
     });
   }
 }
 
-// ── Config handlers ───────────────────────────────────────────
+// ── Config Handlers ───────────────────────────────────────────
+
+/**
+ * Retrieve the current extension configuration.
+ * @param {Function} sendResponse - Response callback
+ */
 async function handleGetConfig(sendResponse) {
   try {
     const config = await StorageManager.getConfig();
-    sendResponse({ config });
+    // Never expose full API key in response
+    const safeConfig = {
+      ...config,
+      apiKey: config.apiKey ? `${config.apiKey.slice(0, 8)}...` : '',
+    };
+    sendResponse({ config: safeConfig, hasKey: !!config.apiKey });
   } catch (err) {
     sendResponse({ error: err.message });
   }
 }
 
+/**
+ * Save extension configuration.
+ * @param {Object} newConfig - Configuration to save
+ * @param {Function} sendResponse - Response callback
+ */
 async function handleSaveConfig(newConfig, sendResponse) {
   try {
+    if (!newConfig.apiKey || !newConfig.apiKey.trim()) {
+      sendResponse({ error: 'API key is required' });
+      return;
+    }
     await StorageManager.saveConfig(newConfig);
     sendResponse({ success: true });
   } catch (err) {
@@ -112,25 +173,57 @@ async function handleSaveConfig(newConfig, sendResponse) {
   }
 }
 
-// ── Cache helpers ─────────────────────────────────────────────
-function addToCache(key, value) {
-  responseCache.set(key, {
-    value,
-    timestamp: Date.now(),
-  });
+// ── Cache Helpers ─────────────────────────────────────────────
 
-  // Clean old entries if cache is large
-  if (responseCache.size > 100) {
+/**
+ * Simple string hash for cache keys.
+ * @param {string} str - String to hash
+ * @returns {string} Hash string
+ */
+function hashString(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0;
+  }
+  return 'h' + Math.abs(hash).toString(36);
+}
+
+/**
+ * Store a value in the response cache with TTL.
+ * Automatically cleans old entries when size exceeds limit.
+ * @param {string} key - Cache key
+ * @param {string} value - Response to cache
+ */
+function setCached(key, value) {
+  // Clean if over limit
+  if (responseCache.size >= MAX_CACHE_SIZE) {
     const now = Date.now();
+    let deleted = 0;
     for (const [k, v] of responseCache) {
       if (now - v.timestamp > CACHE_TTL) {
         responseCache.delete(k);
+        deleted++;
       }
     }
+    // If still over limit, delete oldest entries
+    if (responseCache.size >= MAX_CACHE_SIZE) {
+      const entries = Array.from(responseCache.entries());
+      const toDelete = entries.slice(0, Math.ceil(MAX_CACHE_SIZE * 0.3));
+      toDelete.forEach(([k]) => responseCache.delete(k));
+    }
   }
+
+  responseCache.set(key, { value, timestamp: Date.now() });
 }
 
-function getFromCache(key) {
+/**
+ * Retrieve a cached value if it hasn't expired.
+ * @param {string} key - Cache key
+ * @returns {string|null} Cached value or null
+ */
+function getCached(key) {
   const entry = responseCache.get(key);
   if (!entry) return null;
   if (Date.now() - entry.timestamp > CACHE_TTL) {
@@ -140,13 +233,11 @@ function getFromCache(key) {
   return entry.value;
 }
 
-// ── Installation handler ──────────────────────────────────────
+// ── Lifecycle Hooks ───────────────────────────────────────────
+
+/** Log on installation */
 chrome.runtime.onInstalled.addListener((details) => {
-  if (details.reason === 'install') {
-    // Open a setup page or just log
-    console.log('🔍 ClarityAI installed successfully');
-  }
+  console.log(`🔍 ClarityAI ${details.reason === 'install' ? 'installed' : 'updated'} successfully`);
 });
 
-// Log that service worker started
-console.log('🔍 ClarityAI background service worker started');
+console.log('🔍 ClarityAI background service worker ready');
