@@ -1,473 +1,80 @@
-<div align="center">
-  <img src="icons/icon128.svg" width="64" height="64" alt="ClarityAI Logo">
-  <h1 align="center">ClarityAI</h1>
-  <p align="center">
-    <strong>Adaptive Reading Assistant</strong><br>
-    One click makes any webpage easier to read.
-  </p>
-  <p align="center">
-    <a href="#-features">Features</a> •
-    <a href="#-quick-start">Quick Start</a> •
-    <a href="#-demo">Demo</a> •
-    <a href="#-architecture">Architecture</a> •
-    <a href="#-development">Development</a>
-  </p>
-  <p align="center">
-    <img src="https://img.shields.io/badge/Chrome%20MV3-Supported-4F46E5?logo=google-chrome&logoColor=white" alt="Chrome">
-    <img src="https://img.shields.io/badge/Firefox%20109%2B-Supported-FF7139?logo=firefox-browser&logoColor=white" alt="Firefox">
-    <img src="https://img.shields.io/badge/license-MIT-22C55E" alt="License">
-    <img src="https://img.shields.io/badge/status-Beta-F59E0B" alt="Status">
-    <img src="https://img.shields.io/badge/PRs-welcome-22C55E" alt="PRs Welcome">
-  </p>
-</div>
+# ClarityAI
+### A reading-assistant browser extension
 
----
+ClarityAI adapts webpage presentation and offers AI-assisted text simplification and reading checklists. It is a prototype built with plain JavaScript, HTML, and CSS around a Manifest V3 extension.
 
-## 📋 Overview
+## What is implemented
 
-**ClarityAI** is a browser extension that transforms web pages for accessibility. 
+- **Focus mode:** identifies main content and hides common distractions.
+- **Reading styles:** changes font, spacing, width, and background.
+- **Simplification:** sends extracted text to a configured AI provider.
+- **Reading checklist:** derives a checklist from page content.
+- **Popup settings:** configures the provider, API key, model, and endpoint.
+- **Response cache:** keeps recent AI responses in the background worker.
 
-Built for the **"Beyond the Browser"** track at the **Google Developer Community Hackathon**, it follows a proven winning pattern: one clear pain → one magical interaction → one unforgettable demo.
+These are implementation features, not claims of measured accessibility or learning outcomes.
 
-### The Problem
+## Status and compatibility
 
-Millions of people struggle to consume online content due to:
-- 🧠 **Dense language** — complex vocabulary, long sentences, jargon
-- 🎨 **Distracting layouts** — flashing ads, popups, cluttered sidebars
-- 🔤 **Inaccessible formatting** — small fonts, tight spacing, poor contrast
+This is a development prototype, not a verified browser-store release. Chrome/Edge and Firefox compatibility require separate testing. The original manifest used SVG icons, which Chrome does not support for manifest icons; the accompanying portfolio patch supplies PNG versions and updates the paths.
 
-### The Solution
+Browser-internal pages and some restricted pages cannot run content scripts. Page heuristics can hide useful elements or select the wrong content. Reload the page if restoring the original view does not restore interactive behavior.
 
-| Mode | One-click magic | Why it matters |
-|---|---|---|
-| 🎯 **Focus Mode** | Removes clutter, enlarges text, highlights key info | 85% of users feel overwhelmed by cluttered web layouts |
-| 📖 **Dyslexia Mode** | Dyslexia-friendly formatting in one click | 1 in 5 people have some form of dyslexia |
-| ✂️ **Simplify** | AI rewrites dense paragraphs in plain language | ~50% of adults read below a 6th-grade level |
-| ✅ **Reading Checklist** | Extracts key takeaways as a floating checklist | Reduces cognitive load, improves retention |
+## Try it locally
 
----
+1. Clone this repository.
+2. Open your Chromium browser's extensions page, enable Developer mode, and choose **Load unpacked**.
+3. Select the repository root containing `manifest.json`.
+4. Serve the included demo from the repository root:
 
-## ✨ Features
+   ```bash
+   python -m http.server 8080
+   ```
 
-### 🎯 Focus Mode
+5. Open `http://localhost:8080/demo/demo-article.html`.
+6. Open the extension popup and try Focus and reading-style modes.
+7. For AI features, open the popup settings, enter your provider credentials, and save.
 
-Instantly transforms any cluttered page into a clean, readable layout.
+There is no package installation or build step. The extension does **not** read a `.env` file; configure it through the popup.
 
-```
-Before:                              After:
-┌──────────────────────────┐        ┌──────────────────────────┐
-│ [AD] [STICKY HEADER]     │        │   Quantum Computing...   │
-│ Quantum Computing in...  │        │                          │
-│ [SIDEBAR] [POPUP]        │   →    │ Main content only.      │
-│ Dense paragraph here...  │        │ Larger text.             │
-│ [COOKIE BANNER]          │        │ Key points highlighted.  │
-│ [FOOTER LINKS]           │        │ Clean reading experience.│
-└──────────────────────────┘        └──────────────────────────┘
-```
+Provider defaults are defined in [lib/llm.js](lib/llm.js). Model availability, billing, endpoint compatibility, and browser request behavior depend on the provider and need live verification. Do not commit credentials.
 
-**What it does:**
-- Hides clutter: ads, sidebars, headers, footers, cookie banners, sticky elements
-- Identifies main content via smart heuristics (`article`, `main`, `[role="main"]`, largest text block)
-- Increases font size (118%), line height (1.8), paragraph spacing
-- Highlights headings with a colored left border
-- Adds subtle accent to key paragraphs
-- Disables animations for reduced motion sensitivity
+## Privacy and permissions
 
-### 📖 Dyslexia Mode
+- Focus and reading styles work without an AI call.
+- AI features transmit extracted page text to the provider you configure. Avoid using them on sensitive pages.
+- Settings, including the API key, currently use `chrome.storage.sync`. They can sync through your browser account; this is not a secure credential vault.
+- The manifest grants access to all URLs. Narrower permissions and local-only credential storage are follow-up work.
+- A custom endpoint receives the configured key and page text. Use only an endpoint you trust.
 
-Applies scientifically-proven formatting for dyslexia readability.
-
-| Setting | Value | Benefit |
-|---|---|---|
-| Font | OpenDyslexic | Specifically designed for dyslexia |
-| Background | `#FFF9E6` (warm cream) | Reduces contrast glare |
-| Letter spacing | 0.35em | Prevents letter crowding |
-| Word spacing | 0.2em | Improves word recognition |
-| Line height | 2.0 | Reduces line skipping |
-| Max width | 680px | Easier eye tracking |
-
-### ✂️ Simplify Mode
-
-Uses AI (Anthropic Claude or OpenAI) to rewrite complex text into plain language.
-
-```
-Before:                                After:
-"The implementation of               "Quantum computers
- quantum computing in                are very powerful
- pharmaceutical research             machines. They can
- represents a paradigm               help scientists find
- shift in our approach               new medicines much
- to molecular simulation             faster than before.
- and drug discovery                  This matters because
- methodologies,                      better medicines mean
- potentially reducing                 healthier lives."
- development timelines
- by 60-70%."
-```
-
-**How it works:**
-1. Extracts main content from the page using smart detection
-2. Sends text to LLM with a carefully engineered prompt
-3. LLM rewrites at a grade 5-6 reading level
-4. Preserves **all facts, dates, names, and numbers**
-5. Replaces content in-place — toggle off to restore original
-6. Caches responses in `chrome.storage.session` for 30 minutes
-
-### ✅ Reading Checklist
-
-A floating, draggable panel that extracts key takeaways.
-
-```
-┌─── Key Takeaways ──────╮
-│ ☐ Quantum computing... │  ← Draggable header
-│ ☐ Drug discovery...    │
-│ ☐ Financial modeling.. │  ← Checkable items
-│ ☐ Climate research...  │
-├────────────────────────┤
-│ 2 / 4 complete         │  ← Progress tracker
-└────────────────────────┘
-```
-
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- **Chrome** (version 88+) or **Firefox** (version 109+)
-- For Simplify mode: an API key from [Anthropic](https://console.anthropic.com) or [OpenAI](https://platform.openai.com/api-keys)
-
-### Installation
-
-<details>
-<summary><b>📦 Chrome</b></summary>
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/Pt-KiteretsuShastri/ClarityAI.git
-cd ClarityAI
-
-# 2. Open Chrome and navigate to:
-chrome://extensions
-
-# 3. Enable "Developer mode" (top-right toggle)
-
-# 4. Click "Load unpacked" and select the accessibility-ext/ folder
-
-# 5. The ClarityAI icon should appear in your toolbar
-```
-</details>
-
-<details>
-<summary><b>🦊 Firefox</b></summary>
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/Pt-KiteretsuShastri/ClarityAI.git
-cd ClarityAI
-
-# 2. Open Firefox and navigate to:
-about:debugging#/runtime/this-firefox
-
-# 3. Click "Load Temporary Add-on..."
-
-# 4. Select the manifest.json file inside accessibility-ext/
-
-# 5. The ClarityAI icon should appear in your toolbar
-```
-</details>
-
-### Configuration
-
-<details>
-<summary><b>🔑 Set up your API key (required for Simplify)</b></summary>
-
-1. Click the ClarityAI icon in your browser toolbar
-2. Click the ⚙️ settings gear in the popup header
-3. Select your LLM provider: **Anthropic Claude** or **OpenAI**
-4. Enter your API key:
-   - [Get an Anthropic key](https://console.anthropic.com)
-   - [Get an OpenAI key](https://platform.openai.com/api-keys)
-5. (Optional) Set a custom model name
-6. Click **Save**
-
-> 💡 Your API key is stored securely in `chrome.storage.sync` and never leaves your browser.
-</details>
-
----
-
-## 🎮 Demo
-
-### 3-Minute Judge Presentation
+## Architecture
 
 ```mermaid
-sequenceDiagram
-    participant J as Judge
-    participant C as ClarityAI
-    participant P as Webpage
-
-    J->>C: Opens cluttered article
-    Note over P: Ads, popups, dense text, sidebar
-    
-    J->>C: Clicks Focus Mode 🎯
-    C->>P: Removes clutter, enlarges text
-    Note over P: Clean, readable layout
-    
-    J->>C: Clicks Dyslexia Mode 📖
-    C->>P: Applies OpenDyslexic + spacing
-    Note over P: Warm background, wider letters
-    
-    J->>C: Clicks Simplify ✂️
-    C->>P: AI rewrites in plain language
-    Note over P: Grade 5-6 reading level
-    
-    J->>C: Shows Reading Checklist ✅
-    Note over C: Key takeaways extracted
-    
-    J->>C: Clicks Reset 🔄
-    C->>P: Everything restored
+flowchart LR
+  Popup[Popup controls] --> Content[Content scripts]
+  Content --> DOM[Page presentation]
+  Content --> Worker[Background service worker]
+  Worker --> Cache[In-memory response cache]
+  Worker --> Provider[Configured AI provider]
+  Worker <--> Settings[Browser sync storage]
 ```
 
-### Quick Demo (Offline)
+| Path | Responsibility |
+| --- | --- |
+| `manifest.json` | Permissions, popup, scripts, and background worker |
+| `popup/` | Controls and settings |
+| `content/modes/` | Page transformations |
+| `content/utils/` | Content selection and checklist UI |
+| `background/background.js` | Message routing, configuration, and caching |
+| `lib/` | Provider clients, prompts, and storage |
+| `demo/demo-article.html` | Repeatable local demo |
 
-```bash
-# Open the included demo page
-open demo/demo-article.html
+## Validation and current limits
 
-# It simulates a real cluttered news article with:
-# - Sticky header
-# - Cookie consent banner
-# - Popup advertisement
-# - Sidebar with widgets
-# - Newsletter signup
-# - Dense academic-style content
-```
+The accompanying workflow checks JavaScript syntax, parses the manifest, and verifies declared assets. It does not test browser installation, AI calls, page layouts, or accessibility outcomes.
 
-### Try It On Real Sites
+Before presenting: load the extension in the target browser; test all modes, reset, repeated toggles, provider errors, and navigation. The simplification cache uses only the first 200 text characters and can reuse an inappropriate response; improve the cache key before relying on it.
 
-After loading the extension, try these:
+## Contributing and license
 
-| Site | Best mode | Why |
-|---|---|---|
-| `cnn.com` (article) | Focus + Simplify | Cluttered layout + complex news language |
-| `medium.com` | Focus | Clean but has sticky elements |
-| `wikipedia.org` | Simplify + Dyslexia | Dense academic text |
-| `docs.github.com` | Focus | Documentation with sidebar |
-| `react.dev` | Focus + Dyslexia | Technical content + code blocks |
-
----
-
-## 🏗️ Architecture
-
-```
-accessibility-ext/
-├── 📄 manifest.json                 # Extension manifest (MV3)
-│
-├── 🎨 popup/                       # Extension popup UI
-│   ├── popup.html                  #   Mode selection + settings
-│   ├── popup.css                   #   Dark theme, responsive
-│   └── popup.js                    #   Messaging + config logic
-│
-├── 🧩 content/                     # Injected into web pages
-│   ├── content-script.js           #   Message router + state
-│   ├── modes/
-│   │   ├── focus.js                #   🎯 Focus Mode logic
-│   │   ├── dyslexia.js             #   📖 Dyslexia Mode logic
-│   │   └── simplify.js             #   ✂️ Simplify Mode logic
-│   ├── css/
-│   │   ├── focus.css               #   Focus Mode styles
-│   │   ├── dyslexia.css            #   Dyslexia Mode styles
-│   │   └── simplify.css            #   Simplify Mode styles
-│   └── utils/
-│       ├── dom-utils.js            #   DOM detection heuristics
-│       └── reading-checklist.js    #   ✅ Checklist overlay
-│
-├── ⚙️ background/                  # Service worker (privileged)
-│   └── background.js              #   LLM API calls + caching
-│
-├── 📚 lib/                         # Shared libraries
-│   ├── llm.js                      #   Anthropic + OpenAI clients
-│   ├── prompts.js                  #   Prompt templates
-│   └── storage.js                  #   chrome.storage wrappers
-│
-├── 🎬 demo/                        # Presentation assets
-│   └── demo-article.html          #   Offline demo page
-│
-├── 📁 icons/                       # Extension icons (SVG)
-├── 📄 .env.example
-├── 📄 .gitattributes
-├── 📄 .gitignore
-├── 📄 LICENSE
-├── 📄 CONTRIBUTING.md
-└── 📄 README.md
-```
-
-### Data Flow
-
-```
-User clicks extension icon
-        │
-        ▼
-  ┌──────────┐     chrome.tabs.      ┌──────────────┐
-  │  popup.   │─── sendMessage ───►  │  content-    │
-  │  html/js  │                      │  script.js   │
-  └──────────┘                      └──────┬───────┘
-        ▲                                  │
-        │                           ┌──────┴──────┐
-        │                           │  Mode modules │
-        │                           │ (focus/dys-  │
-        │                           │  lexia/simp-)│
-        │                           └──────┬───────┘
-        │                                  │
-        │                     ┌────────────┴────────────┐
-        │                     │                         │
-        │               ┌─────┴──────┐         ┌────────┴────────┐
-        │               │ CSS inject │         │ background.js   │
-        │               │ (instant)  │         │ (LLM API call)  │
-        │               └────────────┘         └────────┬────────┘
-        │                                               │
-        │                                        ┌──────┴──────┐
-        │                                        │  Anthropic   │
-        │                                        │  / OpenAI    │
-        │                                        └─────────────┘
-```
-
-### Technology Stack
-
-| Layer | Technology | Rationale |
-|---|---|---|
-| **Extension** | Manifest V3 | Latest Chrome extension standard, works in Firefox 109+ |
-| **Language** | Vanilla JavaScript | Zero build step, no framework overhead, instant loading |
-| **CSS** | CSS3 Custom Properties | Dynamic theming, mode stacking via class-based injection |
-| **AI** | Anthropic Claude / OpenAI | Configurable, fast models (Haiku / GPT-4o-mini) |
-| **Storage** | `chrome.storage.sync` | Persists across devices, syncs with Google account |
-| **Font** | OpenDyslexic (CDN) | Proven dyslexia-friendly typeface, loaded on demand |
-| **Caching** | In-memory Map + `chrome.storage.session` | 30-min TTL, 100-entry LRU |
-
----
-
-## 🧑‍💻 Development
-
-### Project Structure Conventions
-
-```
-content/modes/          # Each mode is a self-contained module
-  ├── focus.js          #   Exports FocusMode.enable() / .disable()
-  ├── dyslexia.js       #   Exports DyslexiaMode.enable() / .disable()
-  └── simplify.js       #   Exports SimplifyMode.enable() / .disable()
-
-content/css/            # CSS mirrors mode modules 1:1
-  ├── focus.css         #   .clarity-focus-mode class
-  ├── dyslexia.css      #   .clarity-dyslexia-mode class
-  └── simplify.css      #   .clarity-simplify-mode class
-
-content/utils/          # Shared utilities
-  ├── dom-utils.js      #   DOM heuristics (window.ClarityDOM)
-  └── reading-checklist.js  #   Checklist UI (window.ClarityChecklist)
-```
-
-### Adding a New Mode
-
-```javascript
-// 1. Create content/modes/newmode.js
-window.NewMode = {
-  enabled: false,
-  enable() { /* Apply transformations */ this.enabled = true; },
-  disable() { /* Revert transformations */ this.enabled = false; }
-};
-
-// 2. Create content/css/newmode.css
-.clarity-new-mode { /* Your styles */ }
-
-// 3. Add to manifest.json content_scripts
-// 4. Add handler in content/content-script.js
-// 5. Add button in popup/popup.html
-```
-
-### Coding Style
-
-- **Vanilla JS** — no frameworks, no transpilers
-- **IIFE pattern** for content scripts (avoid global pollution)
-- **`window.*` exports** for cross-file sharing within content scripts
-- **CSS custom properties** for theming consistency
-- **`chrome.storage.sync`** for persistent config
-- **`chrome.runtime.sendMessage`** for popup ↔ content ↔ background communication
-
----
-
-## 📋 API Reference
-
-### Content Script Messages
-
-| Mode | Action | Behavior |
-|---|---|---|
-| `focus` | `enable` | Applies Focus Mode CSS + DOM changes |
-| `focus` | `disable` | Removes Focus Mode, restores originals |
-| `dyslexia` | `enable` | Applies Dyslexia Mode CSS |
-| `dyslexia` | `disable` | Removes Dyslexia Mode CSS |
-| `simplify` | `enable` | Extracts text, sends to LLM, replaces content |
-| `simplify` | `disable` | Restores original content |
-| `reset` | `all` | Disables all modes, restores everything |
-| `sync` | `getState` | Returns current active modes array |
-
-### Background Messages
-
-| Type | Payload | Response |
-|---|---|---|
-| `LLM_REQUEST` | `{ mode, text, url }` | `{ text: "simplified..." }` or `{ error }` |
-| `GET_CONFIG` | — | `{ config: { provider, apiKey, model } }` |
-| `SAVE_CONFIG` | `{ config }` | `{ success: true }` or `{ error }` |
-
----
-
-## 🤝 Contributing
-
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-### Quick Start for Contributors
-
-```bash
-git clone https://github.com/Pt-KiteretsuShastri/ClarityAI.git
-cd ClarityAI/accessibility-ext
-# Load as unpacked extension in Chrome
-# Start hacking!
-```
-
----
-
-## 👥 Team
-
-| Role | Responsibilities |
-|---|---|
-| **Frontend** | Popup UI, content scripts, DOM transformation, CSS modes, demo page |
-| **Backend** | LLM integration, prompt engineering, service worker, caching, config storage |
-
----
-
-## 🏆 Hackathon Context
-
-Built for the **Google Developer Community Hackathon** — "Beyond the Browser" track.
-
-### Why this project wins:
-
-1. **Original category** — Not another AI chatbot, form filler, or PDF Q&A
-2. **Instant demo** — The "before/after" transformation is visible in 1 second
-3. **Universal appeal** — Even non-technical judges understand accessibility
-4. **Proven pattern** — Mochi (cognitive accessibility extension) won Best Extension at a 8,600-participant hackathon
-5. **Social impact** — Making the web accessible for everyone
-
-### The pattern behind the winner:
-
-> **One clear pain** → **One magical interaction** → **One unforgettable demo**
-
----
-
-## 📄 License
-
-[MIT](LICENSE) © 2026 ClarityAI Team
-
----
-
-<div align="center">
-  <sub>Built with ❤️ for the Google Developer Community Hackathon</sub>
-</div>
+See [CONTRIBUTING.md](CONTRIBUTING.md). Some older contribution instructions may need aligning with this prototype's current setup. Licensed under the existing [MIT license](LICENSE).
